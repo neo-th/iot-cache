@@ -74,7 +74,7 @@ def delete_keyValue(key, store_name):
             print(f"Error: {store_name} is not valid JSON file.")
             return
 
-        if key in data:
+        if "data" in data and key in data["data"]:
             del data["data"][key]
             with open(store_name, "w") as f:
                 json.dump(data, f, indent=4)
@@ -162,26 +162,26 @@ def main():
     parser = argparse.ArgumentParser(description="Local key store cache for IoT devices")
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
-    create_key_parser = subparsers.add_parser('create-key', help='Create <key:value> pair')
+    create_key_parser = subparsers.add_parser('create-key', help='Create <key:value> pair', description="This command will create a key pair.")
     create_key_parser.add_argument('key', type=str, help='Add a key')
     create_key_parser.add_argument('value', type=str, help='Add a value')
     create_key_parser.add_argument('store_name', type=str, help='The store name is a .json file.')
 
-    view_key_parser = subparsers.add_parser('view-key', help='View <key:value> pair')
+    view_key_parser = subparsers.add_parser('view-key', help='View <key:value> pair', description="This command lets you view the value of the key pair.")
     view_key_parser.add_argument('key', type=str, help='Add a key')
     view_key_parser.add_argument('store_name', type=str, help='The store name is a .json file.')
 
-    delete_key_parser = subparsers.add_parser('delete-key', help='Delete <key:value> pair')
+    delete_key_parser = subparsers.add_parser('delete-key', help='Delete <key:value> pair', description="This command will delete a key pair.")
     delete_key_parser.add_argument('key', type=str, help='Add a key')
     delete_key_parser.add_argument('store_name', type=str, help='The store name is a .json file.')
 
-    key_store_delete_parser = subparsers.add_parser('delete-store', help='Delete key store')
+    key_store_delete_parser = subparsers.add_parser('delete-store', help='Delete key store', description="This command will delete any valid key store file.")
     key_store_delete_parser.add_argument('store_name', type=str, help='The store name is a .json file.')
 
-    new_store_parser = subparsers.add_parser('create-store', help='Create key store')
+    new_store_parser = subparsers.add_parser('create-store', help='Create key store', description="This command will create a new key store file.")
     new_store_parser.add_argument('store_name', type=str, help='The store name is a .json file.')
 
-    redis_sync_parser = subparsers.add_parser('redis-sync', help='Sync data from the store file to Redis')
+    redis_sync_parser = subparsers.add_parser('redis-sync', help='Sync data from the store file to Redis', description="This command will sync any valid key store file with a redis database.")
     redis_sync_parser.add_argument('store_name', type=str, help='The store name is a .json file.')
     
     redis_sync_parser.add_argument('--host', type=str, default='localhost', help='Redis server hostname (default: localhost)')
@@ -190,7 +190,7 @@ def main():
     redis_sync_parser.add_argument('--ssl', action='store_true', help='Enable SSL connection to Redis')
     redis_sync_parser.add_argument('--overwrite', action='store_true', help='If keys are changed and need to be overwritten ')
 
-    store_list_parser = subparsers.add_parser('store-list', help='This will list all key stores.')
+    store_list_parser = subparsers.add_parser('store-list', help='This will list all key stores.', description='This command lists all valid key store files in the current directory.')
 
     args = parser.parse_args()
 
