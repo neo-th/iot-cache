@@ -182,22 +182,25 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == 'create-key':
-        create_keyValue(args.key, args.value, args.store_name)
-    elif args.command == 'view-key':
-        view_keyValue(args.key, args.store_name)
-    elif args.command == "delete-key":
-        delete_keyValue(args.key, args.store_name)
-    elif args.command == 'delete-store':
-        delete_keyStore(args.store_name)
-    elif args.command == 'create-store':
-        new_keyStore(args.store_name)
-    elif args.command == 'redis-sync':
-        redisPush(args.store_name, host=args.host, port=args.port, password=args.password, ssl=args.ssl, overwrite=args.overwrite)
-    elif args.command == 'store-list':
-        list_key_stores()
-    else:
-        parser.print_help()
+    commands = {
+        'create-key': lambda args: create_keyValue(args.key, args.value, args.store_name),
+        'view-key': lambda args: view_keyValue(args.key, args.store_name),
+        'delete-key': lambda args: delete_keyValue(args.key, args.store_name),
+        'delete-store': lambda args: delete_keyStore(args.store_name),
+        'create-store': lambda args: new_keyStore(args.store_name),
+        'redis-sync': lambda args: redisPush(
+            args.store_name, 
+            host=args.host, 
+            port=args.port, 
+            password=args.password, 
+            ssl=args.ssl, 
+            overwrite=args.overwrite
+        ),
+        'store-list': lambda args: list_key_stores()
+    }
+
+    command = commands.get(args.command, lambda _: parser.print_help())
+    command(args)
 
 
 if __name__ == '__main__':
