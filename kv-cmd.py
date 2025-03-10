@@ -61,33 +61,46 @@ def create_keyValue(key, value, store_name):
         print("Invalid key store file!")
 
 def delete_keyValue(key, store_name):
+
     if not os.path.exists(store_name):
         print(f"Store file {store_name} does not exist.")
         return
 
-    try:
-        with open(store_name, "r") as f:
-            data = json.load(f)
-    except json.JSONDecodeError:
-        print(f"Error: {store_name} is not valid JSON file.")
-        return
+    if is_key_store_file(store_name):
+        try:
+            with open(store_name, "r") as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            print(f"Error: {store_name} is not valid JSON file.")
+            return
 
-    if key in data:
-        del data["data"][key]
-        with open(store_name, "w") as f:
-            json.dump(data, f, indent=4)
-        print(f"Key deleted from {store_name}!")
+        if key in data:
+            del data["data"][key]
+            with open(store_name, "w") as f:
+                json.dump(data, f, indent=4)
+            print(f"Key deleted from {store_name}!")
+        else:
+            print(f"Key not found in {store_name}.")
     else:
-        print(f"Key not found in {store_name}.")
+        print(f"{store_name} is not a valid key store file.")
 
-
-## fix this to only grab store files that have "__tag__"
 def list_key_stores():
     
     only_json = glob.glob("*.json")
-    print(only_json)
 
-## correct if else statement to handle if the file doesnt exists
+    if not only_json:
+        print("No JSON files found in current directory.")
+        return
+
+    valid_files = [i for i in only_json if is_key_store_file(i)]
+
+    if valid_files:
+        print("Valid key store files:")
+        for i in sorted(valid_files):
+            print(f"- {i}")
+    else:
+        print("No valid key store files found.")
+
 def is_key_store_file(store_name):
 
     try:
@@ -114,8 +127,6 @@ def view_keyValue(key, store_name):
     else:
         print("Invalid key store file!")
 
-
-
 def delete_keyStore(store_name):
 
     if is_key_store_file(store_name):
@@ -131,6 +142,7 @@ def delete_keyStore(store_name):
             print("Invalid key store file!")
 
 def new_keyStore(store_name):
+    
     if os.path.exists(store_name):
         print("File exists!")
     else:
@@ -201,7 +213,6 @@ def main():
 
     command = commands.get(args.command, lambda _: parser.print_help())
     command(args)
-
 
 if __name__ == '__main__':
     main()
