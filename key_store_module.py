@@ -122,7 +122,7 @@ def view_keyValue(key, store_name):
             print(f"Error: {store_name} is not a valid JSON file.")
             return
 
-        encrypted_value = data["data"].get(key, None)
+        encrypted_value = data["data"].get(key, None).split(":")[0]
         
         if encrypted_value is None:
             print("Key not found!")
