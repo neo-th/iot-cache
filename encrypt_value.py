@@ -5,7 +5,6 @@ import os
 import base64
 import subprocess
 import platform
-import socket
 
 def get_os():
     os_name = platform.system()
